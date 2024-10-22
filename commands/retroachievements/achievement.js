@@ -4,6 +4,7 @@ const { username, webApiKey } = require("../../config.json");
 const {
   buildAuthorization,
   getGameExtended,
+  getAchievementUnlocks
 } = require("@retroachievements/api");
 
 const authorization = buildAuthorization({ username, webApiKey });
@@ -12,43 +13,41 @@ const data = new SlashCommandBuilder()
   .setName("achievement")
   .setDescription("Get RA achievement!")
   .addStringOption(option =>
-    option.setName("nome-jogo")
-          .setDescription("ID do jogo")
-          .setRequired(true))
-  .addStringOption(option =>
     option.setName("conquista")
           .setDescription("ID do achievement")
           .setRequired(true));
-          
 
 async function execute(interaction) {
   try {
-    const gameId =  interaction.options.getString("nome-jogo");
-    const cheevoId =  interaction.options.getString("conquista");
+    const achievementId =  interaction.options.getString("conquista");
+    const achievementUnlocks = await getAchievementUnlocks(authorization, {
+      achievementId
+    });
+    const gameId = achievementUnlocks.game.id;
     const gameExtended = await getGameExtended(authorization, {
       gameId
     });
 
-    if (!gameExtended) {
-      throw new Error("Failed to retrieve game information");
+    if (!achievementUnlocks) {
+      throw new Error("Failed to retrieve achievement information");
     }
-    const achievementPic = `https://media.retroachievements.org/Badge/${gameExtended.achievements[cheevoId].badgeName}.png`;
+    const achievementPic = `https://media.retroachievements.org/Badge/${gameExtended.achievements[achievementId].badgeName}.png`;
     
     const embed = new EmbedBuilder()
-      .setTitle(`🏆 ${gameExtended.achievements[cheevoId].title}`)
-      .setURL(`https://retroachievements.org/achievement/${cheevoId}`)
+      .setTitle(`🏆 ${gameExtended.achievements[achievementId].title}`)
+      .setURL(`https://retroachievements.org/achievement/${achievementId}`)
       .setAuthor({
         name: "Conquista do RetroAchievements",
         iconURL:
           "https://static.retroachievements.org/assets/images/ra-icon.webp",
         url: "https://retroachievements.org/",
       })
-      .setDescription(`*${gameExtended.achievements[cheevoId].description}*`)
+      .setDescription(`*${gameExtended.achievements[achievementId].description}*`)
       .setThumbnail(achievementPic)
       .addFields(
         {
           name: "**Pontos**",
-          value: `${gameExtended.achievements[cheevoId].points} (${gameExtended.achievements[cheevoId].trueRatio})`,
+          value: `${gameExtended.achievements[achievementId].points} (${gameExtended.achievements[achievementId].trueRatio})`,
         },
         {
           name: "**Jogo**",
