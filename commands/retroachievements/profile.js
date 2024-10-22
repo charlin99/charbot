@@ -18,6 +18,7 @@ const data = new SlashCommandBuilder()
 
 async function execute(interaction) {
     try {
+        const username = interaction.options.getString("nome");
         const userProfile = await getUserProfile(authorization, {
             username
         });
@@ -25,8 +26,6 @@ async function execute(interaction) {
         if (!userProfile) {
             throw new Error("Failed to retrieve user information");
         }
-
-        const username = interaction.options.getString("nome");
 
         const profilePicUrl = `https://media.retroachievements.org${userProfile.userPic}`;
 
@@ -60,7 +59,7 @@ async function execute(interaction) {
                         name: "**Membro desde**",
                         value: `${formattedDate}`,
                         inline: true
-                    })
+                    });
 
         await interaction.reply({ embeds: [embed] });
     } catch (error) {
