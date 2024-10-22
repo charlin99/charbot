@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { username, webApiKey } = require('../../config.json');
 
 const { buildAuthorization, getUserProfile } = require("@retroachievements/api");
@@ -19,11 +19,20 @@ module.exports = {
         const userProfile = await getUserProfile(authorization, { username });
 
         if (userProfile) {
-          await interaction.reply(`RetroAchievements de ${userProfile.user}:
-                                    \nPontuação total: ${userProfile.totalPoints}
-                                    \nRetroPoints: ${userProfile.totalTruePoints}`);
-        } else {
-          await interaction.reply('Não foi possível obter o perfil.');
-        }        
-	},
-};
+            if (userProfile) {
+                const profilePicUrl = `https://media.retroachievements.org${userProfile.userPic}`
+                const embed = new EmbedBuilder()
+                    .setTitle(`RetroAchievements de ${userProfile.user}`)
+                    .setDescription(`*${userProfile.motto}*
+                                    \nPontuação: ${userProfile.totalPoints} (${userProfile.totalTruePoints})
+                                    \nMembro desde: ${userProfile.memberSince}`)
+                    .setImage(profilePicUrl) // Aqui exibimos a imagem do perfil
+                    .setColor('#00FF00'); // Cor opcional
+    
+                await interaction.reply({ embeds: [embed] });
+            } else {
+                await interaction.reply('Não foi possível obter o perfil.');
+            }
+        }
+    }
+}
