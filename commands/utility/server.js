@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+/* const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,3 +9,4 @@ module.exports = {
 		await interaction.reply(`This server is ${interaction.guild.name} and has ${interaction.guild.memberCount} members.`);
 	},
 };
+ */

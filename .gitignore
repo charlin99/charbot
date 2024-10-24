@@ -5,6 +5,7 @@
 /node_modules/*
 storage/
 
+userlist.json
 config.json
 database.json
 database.dev.json
