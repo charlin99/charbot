@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
+const monitorAchievements = require('./tracking-achievements');
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -32,6 +33,13 @@ for (const folder of commandFolders) {
 // It makes some properties non-nullable.
 client.once(Events.ClientReady, readyClient => {
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+	// Iniciar o monitoramento de conquistas
+	monitorAchievements(client);
+
+	// Configurar um intervalo para verificar novas conquistas a cada 5 minutos (300000 ms)
+	setInterval(() => {
+	  monitorAchievements(client);
+	}, 300000); // 5 minutos
 });
 
 // Log in to Discord with your client's token
