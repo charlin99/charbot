@@ -1,31 +1,31 @@
 const fs = require("node:fs");
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require("discord.js");
 
 const data = new SlashCommandBuilder()
-  .setName("registrar")
-  .setDescription("Registrar ou remover usuário do RetroAchievements")
-  .addStringOption(option =>
-    option.setName("usuário")
-          .setDescription("Digite o usuário do RetroAchievements ou deixe vazio para remover")
-          .setRequired(false)); // Agora o username não é obrigatório
+    .setName("registrar")
+    .setDescription("Registre seu usuário do RetroAchievements")
+    .addStringOption(option =>
+        option.setName("usuário")
+            .setDescription("Digite o nome de usuário ou deixe vazio para removê-lo"));
 
 async function execute(interaction) {
-    const discordUserId = interaction.user.id; // ID do usuário do Discord
+    const discordUserId = interaction.user.id;
     const raUsername = interaction.options.getString("usuário");
+    
+    let userlist;
 
     // Lê o arquivo 'userlist.json' para obter a lista atual
     fs.readFile("userlist.json", (readError, data) => {
         if (readError) {
             if (readError.code === "ENOENT") {
-                // Se o arquivo não existe, começamos com uma lista vazia
-                data = '[]';
+                // Se o arquivo não existe, começa com uma lista vazia
+                data = "[]";
             } else {
                 interaction.reply("Erro ao ler o arquivo.");
                 return;
             }
         }
 
-        let userlist;
         try {
             userlist = JSON.parse(data); // Transforma os dados JSON em um array
         } catch (parserError) {
@@ -40,19 +40,22 @@ async function execute(interaction) {
             // Se o username não foi fornecido, remove o usuário da lista
             if (existingUserIndex !== -1) {
                 userlist.splice(existingUserIndex, 1); // Remove o usuário
-                interaction.reply(`Seu usuário foi removido com sucesso.`);
+                interaction.reply(`Usuário **${userlist.raUsername}** removido com sucesso.`);
             } else {
-                interaction.reply("Você não está registrado, portanto, nada foi removido.");
+                interaction.reply("**ERRO:** Impossível remover um usuário não registrado.");
             }
         } else {
-            // Se o usuário já estiver registrado, atualiza o RA username
+            // Se o usuário já estiver registrado, atualiza o RA
             if (existingUserIndex !== -1) {
                 userlist[existingUserIndex].raUsername = raUsername;
-                interaction.reply(`Seu usuário do RetroAchievements foi atualizado para: ${raUsername}.`);
+                interaction.reply(`Seu usuário do RetroAchievements foi atualizado para: **${raUsername}**.`);
             } else {
                 // Se o usuário não estiver registrado, cria um novo registro
-                userlist.push({ discordId: discordUserId, raUsername: raUsername });
-                interaction.reply(`Seu usuário do RetroAchievements (${raUsername}) foi registrado com sucesso!`);
+                userlist.push({
+                    discordId: discordUserId,
+                    raUsername: raUsername
+                });
+                interaction.reply(`Usuário **${raUsername}** registrado com sucesso!`);
             }
         }
 

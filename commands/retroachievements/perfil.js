@@ -16,6 +16,8 @@ const data = new SlashCommandBuilder()
 async function execute(interaction) {
     const discordUserId = interaction.user.id; // ID do usuário do Discord
 
+    let userlist;
+
     // Lê o arquivo 'userlist.json' para obter a lista de usuários registrados
     fs.readFile("userlist.json", (readError, data) => {
         if (readError) {
@@ -23,7 +25,6 @@ async function execute(interaction) {
             return;
         }
 
-        let userlist;
         try {
             userlist = JSON.parse(data); // Transforma os dados JSON em um array
         } catch (parserError) {
@@ -31,7 +32,7 @@ async function execute(interaction) {
             return;
         }
 
-        // Procura o username do RA associado ao ID do Discord
+        // Procura o usuário do RA associado ao ID do Discord
         const user = userlist.find(u => u.discordId === discordUserId);
 
         if (!user) {
@@ -86,7 +87,7 @@ async function execute(interaction) {
             })
             .catch(error => {
                 interaction.reply("Erro ao buscar o perfil no RetroAchievements.");
-            });
+        });
     });
 }
 
