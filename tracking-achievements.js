@@ -24,7 +24,7 @@ async function monitorAchievements(client) {
       
       // 1. Obter os jogos jogados recentemente pelo usuário
       const recentGamesResponse = await getUserRecentlyPlayedGames(authorization, {
-        username
+        username : user.raUsername
       });
       const recentGames = recentGamesResponse.data;
 
@@ -38,7 +38,7 @@ async function monitorAchievements(client) {
         // 2. Verificar progresso do usuário nas conquistas do jogo
         const progressResponse = await getGameInfoAndUserProgress(authorization, {
             gameId : game.ID,
-            username
+            username : user.raUsername
         });
         const progressData = progressResponse.data;
 
@@ -49,7 +49,7 @@ async function monitorAchievements(client) {
         const newAchievements = progressData.Achievements.filter(ach => ach.DateEarned && !previousAchievements.includes(ach.ID));
 
         if (newAchievements.length > 0) {
-          const channel = client.channels.cache.get("seu_canal_id");
+          const channel = client.channels.cache.get("1296639618963472426");
 
           // Notificar sobre cada nova conquista
           for (let achievement of newAchievements) {
