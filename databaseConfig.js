@@ -13,8 +13,11 @@ const Usernames = sequelize.define('usernames', {
         type: Sequelize.STRING,
         unique: true
     },
-    retroachievements: {
+    retroAchievements: {
         type: Sequelize.STRING
+    },
+    lastAchievementScan: {
+        type: Sequelize.DATE
     }
 });
 
