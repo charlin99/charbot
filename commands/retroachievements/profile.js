@@ -1,7 +1,7 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const Usernames = require('../../databaseConfig');
 const { raUsername, raApiKey } = require('../../config.json');
-const { buildAuthorization, getUserProfile } = require("@retroachievements/api");
+const { buildAuthorization, getUserProfile, getGame } = require("@retroachievements/api");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -16,9 +16,21 @@ module.exports = {
             username: userInDatabase.retroAchievements,
           });
 
+        const lastGame = await getGame(authorization, {
+            gameId: userProfile.lastGameId
+        });
+
         const profileEmbed = new EmbedBuilder()
             .setTitle(userProfile.user)
+            .setDescription(userProfile.motto)
+            .setURL("https://retroachievements.org/user/" + userProfile.user)
+            .setThumbnail("https://media.retroachievements.org/UserPic/" + userProfile.user + ".png")
+            .setAuthor({name: "RetroAchievements profile", iconURL: "https://static.retroachievements.org/assets/images/ra-icon.webp"})
+            .addFields(
+                { name: 'Member since', value: userProfile.memberSince },
+                { name: 'Points 🏆', value: userProfile.totalPoints + " (" + userProfile.totalTruePoints + ")" }
+            );
 
-        await interaction.reply({ embeds: [profileEmbed]})
+        await interaction.reply({ embeds: [profileEmbed]});
     }
 };
