@@ -7,14 +7,15 @@ module.exports = {
 
 	async execute(interaction) {
         const modal = new ModalBuilder()
-            .setCustomId('registerRaUsername')
+            .setCustomId('registerRaUsernameModal')
             .setTitle('Register username');
 
         const usernameInput = new TextInputBuilder()
             .setCustomId('raUsernameInput')
-            .setLabel("What's your username?")
+            .setLabel("What's your RetroAchievements username?")
             .setPlaceholder("Enter your RetroAchievements username here.")
-            .setStyle(TextInputStyle.Short);
+            .setStyle(TextInputStyle.Short)
+            .setRequired(true);
 
         const firstActionRow = new ActionRowBuilder().addComponents(usernameInput);
         modal.addComponents(firstActionRow);

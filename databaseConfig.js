@@ -4,21 +4,28 @@ const sequelize = new Sequelize('database', 'user', 'password', {
     host: 'localhost',
     dialect: 'sqlite',
     logging: false,
-    // SQLite only
     storage: 'database.sqlite',
 });
 
 const Usernames = sequelize.define('usernames', {
-    discord: {
+    discordId: {
         type: Sequelize.STRING,
-        unique: true
+        unique: true,
+        allowNull: false
+    },
+    discordUsername: {
+        type: Sequelize.STRING,
+        allowNull: true
     },
     retroAchievements: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
     },
     lastAchievementScan: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: null
     }
 });
 
-module.exports = Usernames;
+module.exports = { Usernames, sequelize };
